@@ -60,8 +60,6 @@ Don't ask - compiler always thinks it is massive.munit.TargetType enum 'neko'
 typedef SysFile = sys.io.File;
 
 
-
-
 class RunCommand extends MUnitTargetCommandBase
 {
 	public static inline var DEFAULT_SERVER_TIMEOUT_SEC:Int = 30;
