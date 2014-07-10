@@ -593,18 +593,19 @@ class RunCommand extends MUnitTargetCommandBase
 		var parameters		:Array<String> = [];
 			
 		// See http://www.dwheeler.com/essays/open-files-urls.html
-		if (FileSys.isWindows)
+
+		if (browser.substring(0, 9) == "phantomjs")
+		{
+			return Sys.command(browser, ['${console.originalDir.nativePath}resource/run_phantom.js', targetLocation]);
+		}
+		else if (FileSys.isWindows)
 		{
 			parameters.push("start");
 			if (browser != null)
 			{
-				if (browser.substr(0, 12) == "flashdevelop")
+				if (browser.substring(0, 12) == "flashdevelop")
 				{
 					return sendFlashDevelopCommand(browser, "Browse", targetLocation);
-				}
-				else if (browser.substr(0, 9) == "phantomjs")
-				{
-					return Sys.command(browser, ['${console.originalDir.nativePath}resource\\run_phantom.js', targetLocation]);
 				}
 				
 				parameters.push(browser);
