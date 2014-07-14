@@ -37,7 +37,6 @@
 	
 	checkTestsComplete = function(){
 		var data = getPageData();
-		
 		console.log("waiting... ");
 		
 		return typeof data!=='undefined' && data.count > 0 && data.count > 0 && data.count == data.total;
@@ -48,9 +47,7 @@
 		if(checkTestsComplete()){
 			clearInterval(waitInterval);
 			console.log("[PhantomJS] Tests complete!");
-			setTimeout(function(){
-				phantom.exit();
-			}, 5000);
+			setTimeout(function() { phantom.exit(0); }, 0);
 		}
 	},
 	
@@ -72,9 +69,7 @@
 					
 					if(checkTestsComplete()){
 						console.log("[PhantomJS] Tests already completed on page-load!");
-						setTimeout(function(){
-							phantom.exit();
-						}, 5000);
+						setTimeout(function() { phantom.exit(0); }, 0);
 						
 					} else {
 						
@@ -84,7 +79,7 @@
 							waitInterval = setInterval(waitForResults, 500);
 						} else {
 							console.log("[PhantomJS] Tests data not found in loaded page - exit");
-							phantom.exit();
+							setTimeout(function() { phantom.exit(0); }, 0);
 						}
 					}
 					
@@ -101,15 +96,15 @@
 		
 		/** Handle js ballback from the clientside - window.callPhantom({ yourData:'here'}); */
 		page.onCallback = function(data) {
-			if(logEverything) console.log("page.onCallback");
+			if(logEverything) console.log("[PhantomJS] page.onCallback");
 			
 			if(data.action == "shutdown"){
 				page.render("../success.png");
-				phantom.exit(0);
+				setTimeout(function() { phantom.exit(0); }, 0);
 			} else if(data.action == 'testComplete'){
-				console.log("test-complete (" + data.count + "/" + data.maxTests + ")");
+				console.log("[PhantomJS] test-complete (" + data.count + "/" + data.maxTests + ")");
 				if(data.count == data.maxTests){
-					console.log("All tests complete");
+					console.log("[PhantomJS] All tests complete");
 					// waiting for the POST data now...
 				}
 			} else {
@@ -119,7 +114,7 @@
 		};
 		
 		page.onError = function (msg, trace) {
-			console.log("page.onError");
+			console.log("[PhantomJS] page.onError");
 			printArgs.apply(this, arguments);
 			phantom.exit(1);
 		};
@@ -127,62 +122,62 @@
 		if(!logEverything) return;
 		
 		page.onInitialized = function() {
-			console.log("page.onInitialized");
+			console.log("[PhantomJS] page.onInitialized");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onLoadStarted = function() {
-			console.log("page.onLoadStarted");
+			console.log("[PhantomJS] page.onLoadStarted");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onLoadFinished = function() {
-			console.log("page.onLoadFinished");
+			console.log("[PhantomJS] page.onLoadFinished");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onUrlChanged = function() {
-			console.log("page.onUrlChanged");
+			console.log("[PhantomJS] page.onUrlChanged");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onNavigationRequested = function() {
-			console.log("page.onNavigationRequested");
+			console.log("[PhantomJS] page.onNavigationRequested");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onResourceRequested = function() {
-			console.log("page.onResourceRequested");
+			console.log("[PhantomJS] page.onResourceRequested");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onResourceReceived = function() {
-			console.log("page.onResourceReceived");
+			console.log("[PhantomJS] page.onResourceReceived");
 			printArgs.apply(this, arguments);
 		};
 
 		page.onClosing = function() {
-			console.log("page.onClosing");
+			console.log("[PhantomJS] page.onClosing");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onConsoleMessage = function() {
-			console.log("page.onConsoleMessage");
+			console.log("[PhantomJS] page.onConsoleMessage");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onAlert = function() {
-			console.log("page.onAlert");
+			console.log("[PhantomJS] page.onAlert");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onConfirm = function() {
-			console.log("page.onConfirm");
+			console.log("[PhantomJS] page.onConfirm");
 			printArgs.apply(this, arguments);
 		};
 		
 		page.onPrompt = function() {
-			console.log("page.onPrompt");
+			console.log("[PhantomJS] page.onPrompt");
 			printArgs.apply(this, arguments);
 		};
 	};
