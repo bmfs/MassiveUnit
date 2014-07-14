@@ -316,7 +316,7 @@ massive.haxe = {};
 massive.haxe.Exception = function(message,info) {
 	this.message = message;
 	this.info = info;
-	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "Exception.hx", lineNumber : 70, className : "massive.haxe.Exception", methodName : "new"}).className;
+	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "Exception.hx", lineNumber : 72, className : "massive.haxe.Exception", methodName : "new"}).className;
 };
 massive.haxe.Exception.__name__ = true;
 massive.haxe.Exception.prototype = {

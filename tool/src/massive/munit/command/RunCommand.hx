@@ -593,8 +593,8 @@ class RunCommand extends MUnitTargetCommandBase
 		var parameters		:Array<String> = [];
 			
 		// See http://www.dwheeler.com/essays/open-files-urls.html
-
-		if (browser.substring(0, 9) == "phantomjs")
+		
+		if (browser != null && browser.indexOf("phantomjs") == 0)
 		{
 			return Sys.command(browser, ['${console.originalDir.nativePath}resource/run_phantom.js', targetLocation]);
 		}
