@@ -43,3 +43,6 @@ cached-classes-null-IgnoreCover.txt
 .temp
 /lib/
 /.idea
+
+.haxelib
+/haxelib.json

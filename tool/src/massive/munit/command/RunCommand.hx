@@ -121,7 +121,12 @@ class RunCommand extends MUnitTargetCommandBase
 	 * not just localhost / 127.0.0.1
 	 */
 	function getMachineIP() {
-		machineIP = new Host(Host.localhost()).toString();
+		var host:String = console.getOption("host");
+		if (host != null){
+			machineIP = new Host(host).toString();
+		} else {
+			machineIP = new Host(Host.localhost()).toString();
+		}
 	}
 	
 	
@@ -387,7 +392,11 @@ class RunCommand extends MUnitTargetCommandBase
 		
 		tmpRunnerDir = tmpDir.resolveDirectory("runner");
 		reportRunnerDir.copyTo(tmpRunnerDir);
-		
+
+		var userTimeout = console.getOption("timeout");
+		if (userTimeout != null) serverTimeoutTimeSec = Std.parseInt(userTimeout);
+		if (serverTimeoutTimeSec == null) serverTimeoutTimeSec = DEFAULT_SERVER_TIMEOUT_SEC;
+		else print('Running tests with $serverTimeoutTimeSec seconds timeout');
 
 		var serverProcess:Process = null;
 		
@@ -400,6 +409,8 @@ class RunCommand extends MUnitTargetCommandBase
 			error("Unable to launch nekotools server. Please kill existing process and try again.", 1);
 		}
 		
+		var serverMonitor = Thread.create(readServerOutput);
+		serverMonitor.sendMessage(serverProcess);
 		
 		var resultMonitor = Thread.create(monitorResults);
 		resultMonitor.sendMessage(Thread.current());
@@ -459,6 +470,19 @@ class RunCommand extends MUnitTargetCommandBase
 		return copy;
 	}
 
+	private function readServerOutput():Void
+	{
+		// just consume server output
+		var serverProcess:Process = Thread.readMessage(true);
+		try
+		{
+			while (true)
+			{
+				serverProcess.stdout.readLine();
+			}
+		}
+		catch (e:haxe.io.Eof) {}
+	}
 
 	private function monitorResults():Void
 	{
@@ -661,8 +685,8 @@ class RunCommand extends MUnitTargetCommandBase
 		file.copyTo(reportRunnerFile);
 
 		FileSys.setCwd(config.dir.nativePath);
-
-		var exitCode = runCommand("neko " + reportRunnerFile.nativePath);
+  
+		var exitCode = runCommand('neko "${reportRunnerFile.nativePath}"');
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
@@ -679,8 +703,8 @@ class RunCommand extends MUnitTargetCommandBase
 		file.copyTo(tmpFile);
 
 		FileSys.setCwd(config.dir.nativePath);
-
-		var exitCode = runCommand(file.nativePath);
+  
+		var exitCode = runProgram(file.nativePath, []);
 
 		FileSys.setCwd(console.originalDir.nativePath);
 		
@@ -697,6 +721,11 @@ class RunCommand extends MUnitTargetCommandBase
 		var args = command.split(" ");
 		var name = args.shift();
 
+    return runProgram(name, args);
+  }
+
+  function runProgram(name:String, args:Array<String>)
+  {
 		var process = new Process(name, args);
 
 		try
@@ -730,7 +759,7 @@ class RunCommand extends MUnitTargetCommandBase
 		if (exitCode > 0 || stfErrString.length > 0)
 		{
 			if(error != null) error += "\n\t";
-			Sys.println("Error running '" + command + "'\n\t" + error);
+			Sys.println("Error running '" + name + "'\n\t" + error);
 		}
 
 		return exitCode;

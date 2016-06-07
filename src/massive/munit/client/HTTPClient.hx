@@ -60,7 +60,8 @@ class HTTPClient implements IAdvancedTestResultClient
 			#elseif (flash || flash9)
 			hostStr = flash.external.ExternalInterface.call('function(){ return top.location.host; }');
 			#else
-			hostStr = '${new Host(Host.localhost()).toString()}:2000';
+			//hostStr = '${new Host(Host.localhost()).toString()}:2000';
+			hostStr = 'localhost:2000';
 			#end
 			
 			hostStr = "http://" + hostStr;
